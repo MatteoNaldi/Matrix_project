@@ -29,6 +29,10 @@ public:
 
     T getValue(int pos);
 
+    Matrix rowSelect(int n);
+
+    Matrix colSelect(int n);
+
 private:
     int rows;
     int cols;
@@ -95,5 +99,31 @@ void Matrix<T>::setValue(T value, int pos) {
 template<typename T>
 T Matrix<T>::getValue(int pos) {
     return Mat[pos];
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::rowSelect(int n) {
+    Matrix x(1, cols);
+    if (n > 0 && n <= rows) {
+        int j = 0;
+        for (int i = (n - 1) * cols; i < n * cols; ++i) {
+            x.Mat[j] = Mat[i];
+            j++;
+        }
+        return x;
+    }
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::colSelect(int n) {
+    Matrix x(1, rows);
+    if (n > 0 && n <= cols) {
+        int j = 0;
+        for (int i = (n - 1); i < rows * cols; i += cols) {
+            x.Mat[j] = Mat[i];
+            j++;
+        }
+        return x;
+    }
 }
 #endif //MATRIX_PROJECT_MATRIX_H
