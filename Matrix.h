@@ -33,6 +33,8 @@ public:
 
     Matrix colSelect(int n);
 
+    Matrix trasposta();
+
 private:
     int rows;
     int cols;
@@ -125,5 +127,16 @@ Matrix<T> Matrix<T>::colSelect(int n) {
         }
         return x;
     }
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::trasposta() {
+    Matrix<T> Tras(cols, rows);
+    for (int i = 0; i < cols; ++i) {
+        for (int j = 0; j < rows; ++j) {
+            Tras.Mat[i * rows + j] = Mat[j * cols + i];
+        }
+    }
+    return Tras;
 }
 #endif //MATRIX_PROJECT_MATRIX_H
