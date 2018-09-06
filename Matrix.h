@@ -35,6 +35,8 @@ public:
 
     Matrix trasposta();
 
+    Matrix operator*(Matrix &B);
+
 private:
     int rows;
     int cols;
@@ -138,5 +140,22 @@ Matrix<T> Matrix<T>::trasposta() {
         }
     }
     return Tras;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(Matrix &B) {
+    Matrix<T> P(rows, B.cols);
+    if (cols == B.rows) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < B.cols; ++j) {
+                P.Mat[i * rows + j] = 0;
+                for (int k = 0; k < cols; ++k) {
+                    P.Mat[i * rows + j] += Mat[i * cols + k] * B.Mat[k * B.cols + j];
+                }
+            }
+        }
+        return P;
+    } else
+        std::cout << "Error Product: different dimension" << std::endl;
 }
 #endif //MATRIX_PROJECT_MATRIX_H
