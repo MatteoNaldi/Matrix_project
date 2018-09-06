@@ -19,6 +19,10 @@ public:
 
     int getCols() const;
 
+    Matrix(Matrix &that);
+
+    Matrix &operator=(const Matrix &that);
+
 private:
     int rows;
     int cols;
@@ -48,4 +52,24 @@ template<typename T>
 int Matrix<T>::getCols() const {
     return cols;
 }
+
+template<typename T>
+Matrix<T>::Matrix(Matrix &that) {
+    rows = that.rows;
+    cols = that.cols;
+    Mat = new T;
+    if (that.Mat != nullptr)
+        *Mat = *that.Mat;
+}
+
+template<typename T>
+Matrix<T> &Matrix<T>::operator=(const Matrix &that) {
+    rows = that.rows;
+    cols = that.cols;
+    for (int i = 0; i < rows * cols; ++i) {
+        Mat[i] = that.Mat[i];
+    }
+    return *this;
+}
+
 #endif //MATRIX_PROJECT_MATRIX_H
