@@ -41,6 +41,8 @@ public:
 
     Matrix backsubs(Matrix &b);
 
+    Matrix inversa();
+
 
 private:
     int rows;
@@ -207,6 +209,30 @@ Matrix<T>::backsubs(Matrix &b) { //algoritmo di gauss per la risoluzione di sist
         d++;
     }
     return x;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::inversa() {  //chiama gauss e come vettore dei termini noti usa una colonna di I
+    Matrix M(rows, cols);
+    Matrix I(rows, cols); //matrice identità
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (i == j)
+                I.Mat[i * rows + j] = 1;
+            else
+                I.Mat[i * rows + j] = 0;
+        }
+    }
+    Matrix b(1, cols);
+    for (int k = 0; k < cols; ++k) {
+        b = I.rowSelect(k + 1);
+        Matrix x(1, cols);
+        x = Gauss(b);
+        for (int l = 0; l < rows; ++l) {
+            M.Mat[l * cols + k] = x.Mat[l];
+        }
+    }
+    return M;
 }
 
 #endif //MATRIX_PROJECT_MATRIX_H
