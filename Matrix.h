@@ -23,6 +23,12 @@ public:
 
     Matrix &operator=(const Matrix &that);
 
+    void setValue();
+
+    void setValue(T value, int pos);
+
+    T getValue(int pos);
+
 private:
     int rows;
     int cols;
@@ -72,4 +78,22 @@ Matrix<T> &Matrix<T>::operator=(const Matrix &that) {
     return *this;
 }
 
+
+template<typename T>
+void Matrix<T>::setValue() {
+    for (int i = 0; i < rows * cols; ++i) {
+        std::cout << "Insert value: ";
+        std::cin >> Mat[i];
+    }
+}
+
+template<typename T>
+void Matrix<T>::setValue(T value, int pos) {
+    Mat[pos] = value;
+}
+
+template<typename T>
+T Matrix<T>::getValue(int pos) {
+    return Mat[pos];
+}
 #endif //MATRIX_PROJECT_MATRIX_H
