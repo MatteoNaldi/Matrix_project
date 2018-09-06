@@ -43,6 +43,8 @@ public:
 
     Matrix inversa();
 
+    void print();
+
 
 private:
     int rows;
@@ -235,4 +237,15 @@ Matrix<T> Matrix<T>::inversa() {  //chiama gauss e come vettore dei termini noti
     return M;
 }
 
+template<typename T>
+void Matrix<T>::print() {
+    int i = 0;
+    while (i < rows) {
+        for (int j = 0; j < cols; ++j) {
+            std::cout << Mat[i * cols + j] << " ";
+        }
+        std::cout << " " << std::endl;
+        i++;
+    }
+}
 #endif //MATRIX_PROJECT_MATRIX_H
