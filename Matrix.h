@@ -15,6 +15,10 @@ public:
 
     ~Matrix();
 
+    int getRows() const;
+
+    int getCols() const;
+
 private:
     int rows;
     int cols;
@@ -35,4 +39,13 @@ Matrix<T>::~Matrix() {
     delete[] Mat;
 }
 
+template<typename T>
+int Matrix<T>::getRows() const {
+    return rows;
+}
+
+template<typename T>
+int Matrix<T>::getCols() const {
+    return cols;
+}
 #endif //MATRIX_PROJECT_MATRIX_H
