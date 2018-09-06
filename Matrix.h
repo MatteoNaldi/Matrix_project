@@ -37,6 +37,11 @@ public:
 
     Matrix operator*(Matrix &B);
 
+    Matrix Gauss(Matrix &b);
+
+    Matrix backsubs(Matrix &b);
+
+
 private:
     int rows;
     int cols;
@@ -158,4 +163,50 @@ Matrix<T> Matrix<T>::operator*(Matrix &B) {
     } else
         std::cout << "Error Product: different dimension" << std::endl;
 }
+
+template<typename T>
+Matrix<T> Matrix<T>::Gauss(Matrix &b) {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
+    Matrix<T> x(1, rows);
+    if (rows == cols) {
+        int c = 1;
+        for (int k = 0; k < rows * cols; k += rows + 1) {
+            if (Mat[k] != 0) {
+                int d = 0;
+                for (int i = k + rows; i < rows * cols; i += rows) {
+                    int m = Mat[i] / Mat[k];
+                    Mat[i] = 0;
+                    b.Mat[c + d] -= m * b.Mat[c - 1];
+                    d++;
+                    for (int j = 0; j < rows - c; ++j) {
+                        Mat[j + i + 1] -= m * Mat[k + j + 1];
+                    }
+                }
+            }
+            c++;
+        }
+        x = backsubs(b);
+        return x;
+    } else
+        std::cout << "Matrix not squared" << std::endl;
+}
+
+template<typename T>
+Matrix<T>
+Matrix<T>::backsubs(Matrix &b) { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
+    Matrix<T> x(1, rows);
+    x.Mat[rows - 1] = b.Mat[rows - 1] / Mat[rows * rows - 1];
+    int c = rows - 1;
+    int d = 1;
+    for (int i = rows * rows - 1; i >= rows; i -= rows) {
+        T s = 0;
+        for (int j = 0; j < rows - c; ++j) {
+            s += Mat[i - rows - j] * x.Mat[rows - j - 1];
+        }
+        x.Mat[c - 1] = (b.Mat[c - 1] - s) / Mat[i - rows - d];
+        c--;
+        d++;
+    }
+    return x;
+}
+
 #endif //MATRIX_PROJECT_MATRIX_H
