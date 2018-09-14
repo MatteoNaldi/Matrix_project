@@ -186,20 +186,36 @@ template<typename T>
 Matrix<T>
 Matrix<T>::backsubs(
         const Matrix &b) const { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
-    Matrix<T> x(1, rows);
-    x.Mat[rows - 1] = b.Mat[rows - 1] / Mat[rows * rows - 1];
-    int c = rows - 1;
-    int d = 1;
-    for (int i = rows * rows - 1; i >= rows; i -= rows) {
-        T s = 0;
-        for (int j = 0; j < rows - c; ++j) {
-            s += Mat[i - rows - j] * x.Mat[rows - j - 1];
+    int tri = 0;  //controllo matrice triangolare superiore
+    for (int k = 1; k < cols; ++k) {
+        int l = 0;
+        while (l < k) {
+            if (Mat[k * cols + l] == 0) {
+                tri++;
+                l++;
+            }
         }
-        x.Mat[c - 1] = (b.Mat[c - 1] - s) / Mat[i - rows - d];
-        c--;
-        d++;
     }
-    return x;
+    int sum = 0;  //num zeri previsto
+    for (int a = 1; a <= cols - 1; ++a) {
+        sum += a;
+    }
+    if (tri == sum) {
+        Matrix<T> x(1, rows);
+        x.Mat[rows - 1] = b.Mat[rows - 1] / Mat[rows * rows - 1];
+        int c = rows - 1;
+        int d = 1;
+        for (int i = rows * rows - 1; i >= rows; i -= rows) {
+            T s = 0;
+            for (int j = 0; j < rows - c; ++j) {
+                s += Mat[i - rows - j] * x.Mat[rows - j - 1];
+            }
+            x.Mat[c - 1] = (b.Mat[c - 1] - s) / Mat[i - rows - d];
+            c--;
+            d++;
+        }
+        return x;
+    }
 }
 
 template<typename T>
