@@ -6,98 +6,136 @@
 
 #include "../Matrix.h"
 
+#include "../MatrixDoubleFactory.h"
+
+std::unique_ptr<MatrixDoubleFactory> MatFact;
+
 TEST(Matrix, Constructor) {
-    Matrix<int> M(2, 2);
-    ASSERT_EQ(2, M.getRows());
-    ASSERT_EQ(2, M.getCols());
+    auto M = MatFact->createMatrix(2, 2);
+    ASSERT_EQ(2, M->getRows());
+    ASSERT_EQ(2, M->getCols());
     for (int i = 0; i < 4; ++i) {
-        ASSERT_EQ(0, M.getValue(i));
+        ASSERT_EQ(0, M->getValue(i));
     }
 }
 
 TEST(Matrix, RowSelect) {
-    Matrix<int> M(2, 2);
+    auto M = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        M.setValue(i + 1, i);
+        M->setValue(i + 1, i);
     }
-    Matrix<int> r1(1, 2);
-    r1 = M.rowSelect(1);
-    EXPECT_EQ(1, r1.getValue(0));
-    EXPECT_EQ(2, r1.getValue(1));
-    Matrix<int> r2(1, 2);
-    r2 = M.rowSelect(2);
-    EXPECT_EQ(3, r2.getValue(0));
-    EXPECT_EQ(4, r2.getValue(1));
+    auto r1 = MatFact->createMatrix(1, 2);
+    *r1 = M->rowSelect(1);
+    EXPECT_EQ(1, r1->getValue(0));
+    EXPECT_EQ(2, r1->getValue(1));
+    auto r2 = MatFact->createMatrix(1, 2);
+    *r2 = M->rowSelect(2);
+    EXPECT_EQ(3, r2->getValue(0));
+    EXPECT_EQ(4, r2->getValue(1));
 }
 
 TEST(Matrix, ColSelect) {
-    Matrix<int> M(2, 2);
+    auto M = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        M.setValue(i + 1, i);
+        M->setValue(i + 1, i);
     }
-    Matrix<int> c1(1, 2);
-    c1 = M.colSelect(1);
-    EXPECT_EQ(1, c1.getValue(0));
-    EXPECT_EQ(3, c1.getValue(1));
-    Matrix<int> c2(1, 2);
-    c2 = M.colSelect(2);
-    EXPECT_EQ(2, c2.getValue(0));
-    EXPECT_EQ(4, c2.getValue(1));
+    auto c1 = MatFact->createMatrix(1, 2);
+    *c1 = M->colSelect(1);
+    EXPECT_EQ(1, c1->getValue(0));
+    EXPECT_EQ(3, c1->getValue(1));
+    auto c2 = MatFact->createMatrix(1, 2);
+    *c2 = M->colSelect(2);
+    EXPECT_EQ(2, c2->getValue(0));
+    EXPECT_EQ(4, c2->getValue(1));
 }
 
 TEST(Matrix, trasposta) {
-    Matrix<int> M(2, 2);
+    auto M = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        M.setValue(i + 1, i);
+        M->setValue(i + 1, i);
     }
-    Matrix<int> T(2, 2);
-    T = M.trasposta();
-    EXPECT_EQ(1, T.getValue(0));
-    EXPECT_EQ(3, T.getValue(1));
-    EXPECT_EQ(2, T.getValue(2));
-    EXPECT_EQ(4, T.getValue(3));
+    auto T = MatFact->createMatrix(2, 2);
+    *T = M->trasposta();
+    EXPECT_EQ(1, T->getValue(0));
+    EXPECT_EQ(3, T->getValue(1));
+    EXPECT_EQ(2, T->getValue(2));
+    EXPECT_EQ(4, T->getValue(3));
 }
 
 TEST(Matrix, op_x) {
-    Matrix<double> A(2, 2);
+    auto A = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        A.setValue(i + 1, i);
+        A->setValue(i + 1, i);
     }
-    Matrix<double> B(2, 2);
+    auto B = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        B.setValue(i + 1, i);
+        B->setValue(i + 1, i);
     }
-    Matrix<double> C(2, 2);
-    C = A * B;
-    EXPECT_EQ(7, C.getValue(0));
-    EXPECT_EQ(10, C.getValue(1));
-    EXPECT_EQ(15, C.getValue(2));
-    EXPECT_EQ(22, C.getValue(3));
+    auto C = MatFact->createMatrix(2, 2);
+    *C = *A * *B;
+    EXPECT_EQ(7, C->getValue(0));
+    EXPECT_EQ(10, C->getValue(1));
+    EXPECT_EQ(15, C->getValue(2));
+    EXPECT_EQ(22, C->getValue(3));
+
+    auto D = MatFact->createMatrix(3, 3);
+    for (int i = 0; i < 4; ++i) {
+        D->setValue(i + 1, i);
+    }
+    auto E = MatFact->createMatrix(2, 2);
+    EXPECT_THROW(*E = *D * *B, MatrixException);
 }
 
 TEST(Matrix, Gauss) {
-    Matrix<double> A(2, 2);
+    auto A = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        A.setValue(i + 1, i);
+        A->setValue(i + 1, i);
     }
-    Matrix<double> b(1, 2);
-    b.setValue(1, 0);
-    b.setValue(1, 1);
-    Matrix<double> x(1, 2);
-    x = A.Gauss(b);
-    EXPECT_EQ(-1, x.getValue(0));
-    EXPECT_EQ(1, x.getValue(1));
+    auto b = MatFact->createMatrix(1, 2);
+    b->setValue(1, 0);
+    b->setValue(1, 1);
+    auto x = MatFact->createMatrix(1, 2);
+    *x = A->Gauss(*b);
+    EXPECT_EQ(-1, x->getValue(0));
+    EXPECT_EQ(1, x->getValue(1));
+    auto B = MatFact->createMatrix(3, 2);
+    for (int i = 0; i < 6; ++i) {
+        B->setValue(i + 1, i);
+    }
+    auto y = MatFact->createMatrix(1, 2);
+    EXPECT_THROW(*y = B->Gauss(*b), MatrixException);
+}
+
+TEST(Matrix, backsub) {
+    auto A = MatFact->createMatrix(2, 2);
+    A->setValue(1, 0);
+    A->setValue(2, 1);
+    A->setValue(0, 2);
+    A->setValue(1, 3);
+    auto b = MatFact->createMatrix(1, 2);
+    b->setValue(1, 0);
+    b->setValue(1, 1);
+    auto x = MatFact->createMatrix(1, 2);
+    *x = A->backsubs(*b);
+    EXPECT_EQ(-1, x->getValue(0));
+    EXPECT_EQ(1, x->getValue(1));
+    auto D = MatFact->createMatrix(2, 2);
+    for (int i = 0; i < 4; ++i) {
+        D->setValue(i + 1, i);
+    }
+    auto y = MatFact->createMatrix(1, 2);
+    EXPECT_THROW(*y = D->backsubs(*b), MatrixException);
 }
 
 TEST(Matrix, Inversa) {
-    Matrix<double> A(2, 2);
+    auto A = MatFact->createMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
-        A.setValue(i + 1, i);
+        A->setValue(i + 1, i);
     }
-    Matrix<double> B(2, 2);
-    B = A.inversa();
-    EXPECT_EQ(-2, B.getValue(0));
-    EXPECT_EQ(1, B.getValue(1));
-    EXPECT_EQ(1.5, B.getValue(2));
-    EXPECT_EQ(-0.5, B.getValue(3));
+    auto B = MatFact->createMatrix(2, 2);
+    *B = A->inversa();
+    EXPECT_EQ(-2, B->getValue(0));
+    EXPECT_EQ(1, B->getValue(1));
+    EXPECT_EQ(1.5, B->getValue(2));
+    EXPECT_EQ(-0.5, B->getValue(3));
 }
