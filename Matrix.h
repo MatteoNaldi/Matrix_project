@@ -25,21 +25,21 @@ public:
 
     void setValue(T value, int pos);
 
-    T getValue(int pos);
+    T getValue(int pos) const;
 
-    Matrix rowSelect(int n);
+    Matrix rowSelect(int n) const;
 
-    Matrix colSelect(int n);
+    Matrix colSelect(int n) const;
 
-    Matrix trasposta();
+    Matrix trasposta() const;
 
-    Matrix operator*(Matrix &B);
+    Matrix operator*(const Matrix &B) const;
 
-    Matrix Gauss(Matrix &b);
+    Matrix Gauss(const Matrix &b) const;
 
-    Matrix backsubs(Matrix &b);
+    Matrix backsubs(const Matrix &b) const;
 
-    Matrix inversa();
+    Matrix inversa() const;
 
 private:
     int rows;
@@ -97,12 +97,12 @@ void Matrix<T>::setValue(T value, int pos) {
 }
 
 template<typename T>
-T Matrix<T>::getValue(int pos) {
+T Matrix<T>::getValue(int pos) const {
     return Mat[pos];
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::rowSelect(int n) {
+Matrix<T> Matrix<T>::rowSelect(int n) const {
     Matrix x(1, cols);
     if (n > 0 && n <= rows) {
         int j = 0;
@@ -115,7 +115,7 @@ Matrix<T> Matrix<T>::rowSelect(int n) {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::colSelect(int n) {
+Matrix<T> Matrix<T>::colSelect(int n) const {
     Matrix x(1, rows);
     if (n > 0 && n <= cols) {
         int j = 0;
@@ -128,7 +128,7 @@ Matrix<T> Matrix<T>::colSelect(int n) {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::trasposta() {
+Matrix<T> Matrix<T>::trasposta() const {
     Matrix<T> Tras(cols, rows);
     for (int i = 0; i < cols; ++i) {
         for (int j = 0; j < rows; ++j) {
@@ -139,7 +139,7 @@ Matrix<T> Matrix<T>::trasposta() {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::operator*(Matrix &B) {
+Matrix<T> Matrix<T>::operator*(const Matrix &B) const {
     Matrix<T> P(rows, B.cols);
     if (cols == B.rows) {
         for (int i = 0; i < rows; ++i) {
@@ -156,7 +156,8 @@ Matrix<T> Matrix<T>::operator*(Matrix &B) {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Gauss(Matrix &b) {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
+Matrix<T>
+Matrix<T>::Gauss(const Matrix &b) const {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
     Matrix<T> x(1, rows);
     if (rows == cols) {
         int c = 1;
@@ -183,7 +184,8 @@ Matrix<T> Matrix<T>::Gauss(Matrix &b) {  //algoritmo di gauss per la risoluzione
 
 template<typename T>
 Matrix<T>
-Matrix<T>::backsubs(Matrix &b) { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
+Matrix<T>::backsubs(
+        const Matrix &b) const { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
     Matrix<T> x(1, rows);
     x.Mat[rows - 1] = b.Mat[rows - 1] / Mat[rows * rows - 1];
     int c = rows - 1;
@@ -201,7 +203,7 @@ Matrix<T>::backsubs(Matrix &b) { //algoritmo di gauss per la risoluzione di sist
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::inversa() {  //chiama gauss e come vettore dei termini noti usa una colonna di I
+Matrix<T> Matrix<T>::inversa() const {  //chiama gauss e come vettore dei termini noti usa una colonna di I
     Matrix M(rows, cols);
     Matrix I(rows, cols); //matrice identità
     for (int i = 0; i < rows; ++i) {
