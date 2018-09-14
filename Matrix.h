@@ -6,6 +6,7 @@
 #define MATRIX_PROJECT_MATRIX_H
 
 #include <iostream>
+#include "MatrixException.h"
 
 template<typename T>
 
@@ -33,11 +34,11 @@ public:
 
     Matrix trasposta() const;
 
-    Matrix operator*(const Matrix &B) const;
+    Matrix operator*(const Matrix &B) const throw(MatrixException);
 
-    Matrix Gauss(const Matrix &b) const;
+    Matrix Gauss(const Matrix &b) const throw(MatrixException);
 
-    Matrix backsubs(const Matrix &b) const;
+    Matrix backsubs(const Matrix &b) const throw(MatrixException);
 
     Matrix inversa() const;
 
@@ -139,7 +140,7 @@ Matrix<T> Matrix<T>::trasposta() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::operator*(const Matrix &B) const {
+Matrix<T> Matrix<T>::operator*(const Matrix &B) const throw(MatrixException) {
     Matrix<T> P(rows, B.cols);
     if (cols == B.rows) {
         for (int i = 0; i < rows; ++i) {
@@ -152,14 +153,15 @@ Matrix<T> Matrix<T>::operator*(const Matrix &B) const {
         }
         return P;
     } else
-        std::cout << "Error Product: different dimension" << std::endl;
+        throw MatrixException("Different Matrix Dimension");
 }
 
 template<typename T>
 Matrix<T>
-Matrix<T>::Gauss(const Matrix &b) const {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
-    Matrix<T> x(1, rows);
+Matrix<T>::Gauss(
+        const Matrix &b) const throw(MatrixException) {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
     if (rows == cols) {
+        Matrix<T> x(1, rows);
         int c = 1;
         for (int k = 0; k < rows * cols; k += rows + 1) {
             if (Mat[k] != 0) {
@@ -179,29 +181,29 @@ Matrix<T>::Gauss(const Matrix &b) const {  //algoritmo di gauss per la risoluzio
         x = backsubs(b);
         return x;
     } else
-        std::cout << "Matrix not squared" << std::endl;
+        throw MatrixException("Matrix not squared");
 }
 
 template<typename T>
 Matrix<T>
 Matrix<T>::backsubs(
-        const Matrix &b) const { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
+        const Matrix &b) const throw(MatrixException) { //algoritmo di gauss per la risoluzione di sistemi lineari:sostituzione all'indietro
     int tri = 0;  //controllo matrice triangolare superiore
     for (int k = 1; k < cols; ++k) {
         int l = 0;
         while (l < k) {
             if (Mat[k * cols + l] == 0) {
                 tri++;
-                l++;
             }
+            l++;
         }
     }
     int sum = 0;  //num zeri previsto
     for (int a = 1; a <= cols - 1; ++a) {
         sum += a;
     }
+    Matrix<T> x(1, rows);
     if (tri == sum) {
-        Matrix<T> x(1, rows);
         x.Mat[rows - 1] = b.Mat[rows - 1] / Mat[rows * rows - 1];
         int c = rows - 1;
         int d = 1;
@@ -215,7 +217,8 @@ Matrix<T>::backsubs(
             d++;
         }
         return x;
-    }
+    } else
+        throw MatrixException("Not triangular matrix");
 }
 
 template<typename T>
