@@ -5,7 +5,6 @@
 #ifndef MATRIX_PROJECT_MATRIX_H
 #define MATRIX_PROJECT_MATRIX_H
 
-#include <iostream>
 #include "MatrixException.h"
 
 template<typename T>
@@ -24,7 +23,7 @@ public:
 
     Matrix &operator=(const Matrix &that);
 
-    void setValue(T value, int pos);
+    void setValue(T value, int pos) const;
 
     T getValue(int pos) const;
 
@@ -93,7 +92,7 @@ Matrix<T> &Matrix<T>::operator=(const Matrix &that) {
 
 
 template<typename T>
-void Matrix<T>::setValue(T value, int pos) {
+void Matrix<T>::setValue(T value, int pos) const {
     Mat[pos] = value;
 }
 
@@ -160,8 +159,8 @@ template<typename T>
 Matrix<T>
 Matrix<T>::Gauss(
         const Matrix &b) const throw(MatrixException) {  //algoritmo di gauss per la risoluzione di sistemi lineari:riduzione
+    Matrix<T> x(1, rows);
     if (rows == cols) {
-        Matrix<T> x(1, rows);
         int c = 1;
         for (int k = 0; k < rows * cols; k += rows + 1) {
             if (Mat[k] != 0) {
@@ -223,7 +222,6 @@ Matrix<T>::backsubs(
 
 template<typename T>
 Matrix<T> Matrix<T>::inversa() const {  //chiama gauss e come vettore dei termini noti usa una colonna di I
-    Matrix M(rows, cols);
     Matrix I(rows, cols); //matrice identità
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -234,6 +232,7 @@ Matrix<T> Matrix<T>::inversa() const {  //chiama gauss e come vettore dei termin
         }
     }
     Matrix b(1, cols);
+    Matrix M(rows, cols);
     for (int k = 0; k < cols; ++k) {
         b = I.rowSelect(k + 1);
         Matrix x(1, cols);
