@@ -17,6 +17,10 @@ TEST(Matrix, Constructor) {
     for (int i = 0; i < 4; ++i) {
         ASSERT_EQ(0, M->getValue(i));
     }
+    EXPECT_THROW(M->setValue(1, -2), MatrixException);
+    EXPECT_THROW(M->setValue(1, 5), MatrixException);
+    EXPECT_THROW(M->getValue(-7), MatrixException);
+    EXPECT_THROW(M->getValue(10), MatrixException);
 }
 
 TEST(Matrix, RowSelect) {
@@ -32,6 +36,7 @@ TEST(Matrix, RowSelect) {
     *r2 = M->rowSelect(2);
     EXPECT_EQ(3, r2->getValue(0));
     EXPECT_EQ(4, r2->getValue(1));
+    EXPECT_THROW(M->rowSelect(3), MatrixException);
 }
 
 TEST(Matrix, ColSelect) {
@@ -47,6 +52,7 @@ TEST(Matrix, ColSelect) {
     *c2 = M->colSelect(2);
     EXPECT_EQ(2, c2->getValue(0));
     EXPECT_EQ(4, c2->getValue(1));
+    EXPECT_THROW(M->colSelect(3), MatrixException);
 }
 
 TEST(Matrix, trasposta) {

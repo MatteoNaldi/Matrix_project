@@ -23,13 +23,13 @@ public:
 
     Matrix &operator=(const Matrix &that);
 
-    void setValue(T value, int pos) const;
+    void setValue(T value, int pos) const throw(MatrixException);
 
-    T getValue(int pos) const;
+    T getValue(int pos) const throw(MatrixException);
 
-    Matrix rowSelect(int n) const;
+    Matrix rowSelect(int n) const throw(MatrixException);
 
-    Matrix colSelect(int n) const;
+    Matrix colSelect(int n) const throw(MatrixException);
 
     Matrix trasposta() const;
 
@@ -92,17 +92,23 @@ Matrix<T> &Matrix<T>::operator=(const Matrix &that) {
 
 
 template<typename T>
-void Matrix<T>::setValue(T value, int pos) const {
-    Mat[pos] = value;
+void Matrix<T>::setValue(T value, int pos) const throw(MatrixException) {
+    if (pos >= 0 && pos < rows * cols)
+        Mat[pos] = value;
+    else
+        throw MatrixException("Out of range");
 }
 
 template<typename T>
-T Matrix<T>::getValue(int pos) const {
-    return Mat[pos];
+T Matrix<T>::getValue(int pos) const throw(MatrixException) {
+    if (pos >= 0 && pos < rows * cols)
+        return Mat[pos];
+    else
+        throw MatrixException("There's no value at that pos");
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::rowSelect(int n) const {
+Matrix<T> Matrix<T>::rowSelect(int n) const throw(MatrixException) {
     Matrix x(1, cols);
     if (n > 0 && n <= rows) {
         int j = 0;
@@ -111,11 +117,12 @@ Matrix<T> Matrix<T>::rowSelect(int n) const {
             j++;
         }
         return x;
-    }
+    } else
+        throw MatrixException("Number too high");
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::colSelect(int n) const {
+Matrix<T> Matrix<T>::colSelect(int n) const throw(MatrixException) {
     Matrix x(1, rows);
     if (n > 0 && n <= cols) {
         int j = 0;
@@ -124,7 +131,8 @@ Matrix<T> Matrix<T>::colSelect(int n) const {
             j++;
         }
         return x;
-    }
+    } else
+        throw MatrixException("Number too high");
 }
 
 template<typename T>
